@@ -37,6 +37,16 @@ function game() {
   window.addEventListener("keydown", (e) => {
     const key = e.key.toUpperCase();
 
+    if (key === "BACKSPACE") {
+      if (currentTile > 0) {
+        currentTile--;
+        console.log("Deleted letter: ", tiles[currentTile].textContent);
+        tiles[currentTile].textContent = "";
+      }
+      console.log("No letters to delete!");
+      return;
+    }
+
     if (!validLetters.includes(key)) {
       console.log("Invalid letter!");
       return;
