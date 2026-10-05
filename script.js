@@ -3,6 +3,7 @@ const rows = document.querySelectorAll(".row");
 const tiles = document.querySelectorAll(".tile");
 
 let currentTile = 0;
+let currentRow = 0;
 
 const validLetters = [
   "Q",
@@ -37,6 +38,9 @@ function game() {
   window.addEventListener("keydown", (e) => {
     const key = e.key.toUpperCase();
 
+    const rowStart = currentRow * 5;
+    const rowEnd = rowStart + 5;
+
     if (key === "BACKSPACE") {
       if (currentTile > 0) {
         currentTile--;
@@ -44,6 +48,15 @@ function game() {
         tiles[currentTile].textContent = "";
       }
       console.log("No letters to delete!");
+      return;
+    }
+
+    if (key === "ENTER" && currentTile === rowEnd) {
+      currentRow++;
+      return;
+    }
+
+    if (currentTile >= rowEnd) {
       return;
     }
 
