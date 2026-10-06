@@ -7,8 +7,25 @@ let currentRow = 0;
 let currentWord = "";
 let gameOver = false;
 
-const correctWord = "CIGAR";
 const WORD_LENGTH = 5;
+const ROWS = 6;
+
+async function getRandomWord() {
+  const response = await fetch("./words.json");
+  const words = await response.json();
+
+  return words[Math.floor(Math.random() * words.length)].toUpperCase();
+}
+
+async function getAllWords() {
+  const response = await fetch("./words.json");
+  const words = await response.json();
+  return words.map((word) => word.toUpperCase());
+}
+
+const allWords = await getAllWords();
+const correctWord = await getRandomWord();
+console.log(correctWord);
 
 const validLetters = [
   "Q",
@@ -72,7 +89,23 @@ function game() {
         return;
       }
 
-      alert("Incorrect word. Try again!");
+      if (!allWords.includes(currentWord)) {
+        alert("The word does not exist!");
+
+        for (let i = rowStart; i < rowEnd; i++) {
+          tiles[i].textContent = "";
+        }
+
+        currentWord = "";
+        currentTile = rowStart;
+
+        return;
+      }
+
+      if (currentRow + 1 !== ROWS) {
+        alert("Incorrect word. Try again!");
+      }
+
       currentWord = "";
       currentRow++;
 
