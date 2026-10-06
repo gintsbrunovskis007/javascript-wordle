@@ -24,6 +24,14 @@ body {
   font-size: 2rem;
 }
 
+.wrong-spot {
+  background-color: orange;
+}
+
+.correct-spot {
+  background-color: green;
+}
+
 #grid {
   display: grid;
   grid-template-rows: repeat(6, 1fr);

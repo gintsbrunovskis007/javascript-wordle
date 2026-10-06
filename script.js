@@ -27,6 +27,9 @@ const allWords = await getAllWords();
 const correctWord = await getRandomWord();
 console.log(correctWord);
 
+const correctWordChars = correctWord.split("");
+const currentWordChars = currentWord.split("");
+
 const validLetters = [
   "Q",
   "W",
@@ -56,6 +59,37 @@ const validLetters = [
   "M",
 ];
 
+const correctWordLetterCounts = correctWordChars.reduce((counts, letter) => {
+  counts[letter] = (counts[letter] || 0) + 1;
+  return counts;
+}, {});
+
+function checkWordGuess() {
+  const rowStart = currentRow * WORD_LENGTH;
+  const currentWordChars = currentWord.split("");
+  const letterCounts = { ...correctWordLetterCounts };
+
+  for (let i = 0; i < WORD_LENGTH; i++) {
+    const tile = tiles[rowStart + i];
+
+    if (currentWordChars[i] === correctWordChars[i]) {
+      tile.classList.add("correct-spot");
+      letterCounts[currentWordChars[i]]--;
+    }
+  }
+
+  for (let i = 0; i < WORD_LENGTH; i++) {
+    const tile = tiles[rowStart + i];
+    if (tile.classList.contains("correct-spot")) continue;
+
+    const letter = currentWordChars[i];
+    if (correctWordChars.includes(letter) && letterCounts[letter] > 0) {
+      tile.classList.add("wrong-spot");
+      letterCounts[letter]--;
+    }
+  }
+}
+
 function game() {
   window.addEventListener("keydown", (e) => {
     if (gameOver) {
@@ -81,6 +115,8 @@ function game() {
         return;
       }
 
+      checkWordGuess();
+
       if (currentWord === correctWord) {
         alert("You guessed the correct word!");
 
@@ -94,6 +130,7 @@ function game() {
 
         for (let i = rowStart; i < rowEnd; i++) {
           tiles[i].textContent = "";
+          tiles[i].classList.remove("correct-spot", "wrong-spot");
         }
 
         currentWord = "";
