@@ -25,14 +25,62 @@ body {
 }
 
 .wrong-spot {
-  background-color: orange;
 }
 
 .correct-spot {
-  background-color: green;
+}
+
+.no-spot {
 }
 
 #grid {
   display: grid;
   grid-template-rows: repeat(6, 1fr);
+}
+
+.spin {
+  animation: flip 1s ease forwards;
+  transform-style: preserve-3d;
+}
+
+.tile:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.tile:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.tile:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.tile:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+.tile:nth-child(5) {
+  animation-delay: 0.4s;
+}
+
+@keyframes flip {
+  0% {
+    transform: rotateX(0deg);
+    background-color: transparent;
+  }
+
+  49% {
+    transform: rotateX(89deg);
+    background-color: transparent;
+  }
+
+  50% {
+    transform: rotateX(90deg);
+    background-color: var(--flip-color);
+  }
+
+  100% {
+    transform: rotateX(0deg);
+    background-color: var(--flip-color);
+  }
 }

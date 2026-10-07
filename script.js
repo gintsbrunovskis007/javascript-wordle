@@ -1,5 +1,3 @@
-const grid = document.getElementById("grid");
-const rows = document.querySelectorAll(".row");
 const tiles = document.querySelectorAll(".tile");
 
 let currentTile = 0;
@@ -10,25 +8,14 @@ let gameOver = false;
 const WORD_LENGTH = 5;
 const ROWS = 6;
 
-async function getRandomWord() {
-  const response = await fetch("./words.json");
-  const words = await response.json();
+const response = await fetch("./words.json");
+const words = await response.json();
 
-  return words[Math.floor(Math.random() * words.length)].toUpperCase();
-}
-
-async function getAllWords() {
-  const response = await fetch("./words.json");
-  const words = await response.json();
-  return words.map((word) => word.toUpperCase());
-}
-
-const allWords = await getAllWords();
-const correctWord = await getRandomWord();
+const allWords = words.map((word) => word.toUpperCase());
+const correctWord = allWords[Math.floor(Math.random() * allWords.length)];
 console.log(correctWord);
 
 const correctWordChars = correctWord.split("");
-const currentWordChars = currentWord.split("");
 
 const validLetters = [
   "Q",
@@ -73,7 +60,8 @@ function checkWordGuess() {
     const tile = tiles[rowStart + i];
 
     if (currentWordChars[i] === correctWordChars[i]) {
-      tile.classList.add("correct-spot");
+      tile.classList.add("spin", "correct-spot");
+      tile.style.setProperty("--flip-color", "#6aaa64");
       letterCounts[currentWordChars[i]]--;
     }
   }
@@ -84,8 +72,12 @@ function checkWordGuess() {
 
     const letter = currentWordChars[i];
     if (correctWordChars.includes(letter) && letterCounts[letter] > 0) {
-      tile.classList.add("wrong-spot");
+      tile.classList.add("spin", "wrong-spot");
+      tile.style.setProperty("--flip-color", "#c9b458");
       letterCounts[letter]--;
+    } else {
+      tile.classList.add("spin", "no-spot");
+      tile.style.setProperty("--flip-color", "#787c7e");
     }
   }
 }
@@ -115,47 +107,36 @@ function game() {
         return;
       }
 
-      checkWordGuess();
-
-      if (currentWord === correctWord) {
-        alert("You guessed the correct word!");
-
-        gameOver = true;
-
-        return;
-      }
-
       if (!allWords.includes(currentWord)) {
         alert("The word does not exist!");
 
         for (let i = rowStart; i < rowEnd; i++) {
           tiles[i].textContent = "";
-          tiles[i].classList.remove("correct-spot", "wrong-spot");
+          tiles[i].classList.remove("correct-spot", "wrong-spot", "no-spot");
         }
 
         currentWord = "";
         currentTile = rowStart;
-
         return;
       }
 
-      if (currentRow + 1 !== ROWS) {
-        alert("Incorrect word. Try again!");
+      checkWordGuess();
+
+      if (currentWord === correctWord) {
+        gameOver = true;
+        return;
       }
 
       currentWord = "";
       currentRow++;
 
-      if (currentRow >= rows.length) {
+      if (currentRow >= ROWS) {
         alert(`Game over! The correct word was ${correctWord}.`);
-
         gameOver = true;
-
         return;
       }
 
-      currentTile = currentRow * 5;
-
+      currentTile = currentRow * WORD_LENGTH;
       return;
     }
 
