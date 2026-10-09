@@ -1,86 +1,367 @@
+/* =========================
+   Base
+   ========================= */
+
+* {
+  box-sizing: border-box;
+}
+
 body {
+  min-height: 100vh;
+  min-height: 100dvh;
   margin: 0;
-  padding: 0;
-  background-color: black;
+  padding: 10px;
+
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  color: white;
+  justify-content: center;
+
+  background-color: #000;
+  color: #fff;
   font-family: sans-serif;
 }
 
-.row {
-  display: flex;
-}
+/* =========================
+   Game Grid
+   ========================= */
 
-.tile {
-  height: 50px;
-  width: 50px;
-  border: 1px solid white;
-  margin: 5px;
+#game {
+  width: min(100%, 500px);
+
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  font-size: 2rem;
-}
-
-.wrong-spot {
-}
-
-.correct-spot {
-}
-
-.no-spot {
 }
 
 #grid {
   display: grid;
   grid-template-rows: repeat(6, 1fr);
+  margin-bottom: 0.5em;
+}
+
+.row {
+  display: flex;
+  height: auto;
+  margin-inline: auto;
+}
+
+.tile {
+  width: clamp(34px, min(13vw, 7.5dvh), 58px);
+  height: clamp(34px, min(13vw, 7.5dvh), 58px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: clamp(2px, 0.6vw, 4px);
+  border: 2px solid #3a3a3c;
+
+  font-size: clamp(1.3rem, 6vw, 2rem);
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.highlight {
+  border-color: #818384;
+}
+
+#newGameButton {
+  border: none;
+  background-color: #818384;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 5px;
+  border-radius: 20px;
+  padding: 5px 20px;
+  transition: 0.1s ease;
+}
+
+#newGameButton:hover {
+  background-color: #3a3a3c;
+}
+
+/* =========================
+   Tile Animations
+   ========================= */
+
+.pop {
+  animation: pop 0.1s ease;
 }
 
 .spin {
-  animation: flip 1s ease forwards;
+  animation: flip 0.3s ease forwards;
+  animation-delay: calc(var(--animation-order) * 0.3s);
+
   transform-style: preserve-3d;
 }
 
-.tile:nth-child(1) {
-  animation-delay: 0s;
+.no-word {
+  animation: no-word 0.5s ease;
 }
 
-.tile:nth-child(2) {
-  animation-delay: 0.1s;
+/* =========================
+   Keyboard
+   ========================= */
+
+.keyboard {
+  width: min(100%, 500px);
+  padding-inline: 4px;
+  user-select: none;
 }
 
-.tile:nth-child(3) {
-  animation-delay: 0.2s;
+.keyboard-row {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-block: 6px;
 }
 
-.tile:nth-child(4) {
-  animation-delay: 0.3s;
+.keyboard-row button {
+  flex: 1 1 0;
+  min-width: 0;
+
+  height: clamp(42px, min(12vw, 7dvh), 56px);
+  padding: 0;
+
+  border: none;
+  border-radius: 6px;
+
+  background-color: #818384;
+  color: #fff;
+
+  font-size: clamp(0.85rem, 3.8vw, 1.2rem);
+  font-weight: bold;
+  text-transform: uppercase;
+
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 0.15s ease,
+    transform 0.05s ease;
 }
 
-.tile:nth-child(5) {
-  animation-delay: 0.4s;
+.keyboard-row button:active {
+  transform: scale(0.95);
+}
+
+.keyboard-row button.wide-key {
+  flex: 1.5 1 0;
+  font-size: clamp(0.6rem, 2.6vw, 0.8rem);
+  letter-spacing: 0;
+}
+
+.keyboard-row:nth-child(2) {
+  padding-inline: 5%;
+}
+
+@media (hover: hover) {
+  .keyboard-row button:hover {
+    filter: brightness(1.1);
+  }
+}
+
+/* =========================
+   Keyboard Tile States
+   ========================= */
+
+.keyboard-row button.no-spot-check {
+  background-color: #3a3a3c;
+}
+
+.keyboard-row button.wrong-spot-check {
+  background-color: #b59f3b;
+}
+
+.keyboard-row button.correct-spot-check {
+  background-color: #538d4e;
+}
+
+/* =========================
+   Popups
+   ========================= */
+
+.popup-container {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  z-index: 9999;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  transform: translateX(-50%);
+}
+
+.popup {
+  padding: 12px 20px;
+
+  background: #fff;
+  color: #000;
+
+  border-radius: 4px;
+
+  font-weight: bold;
+
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* =========================
+   End Screen
+   ========================= */
+
+.end-screen-container {
+  position: fixed;
+  top: 5%;
+  left: 50%;
+  z-index: 9999;
+
+  width: min(90%, 600px);
+  height: 90%;
+  padding: 1.5rem;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  overflow-y: auto;
+
+  transform: translateX(-50%);
+
+  background-color: #3a3a3c;
+  color: #fff;
+
+  border-radius: 20px;
+
+  font-size: 0.8rem;
+  font-weight: bold;
+
+  animation: fade-in 0.1s ease;
+}
+
+.close-button {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+
+  border: none;
+  background: none;
+
+  color: #fff;
+  font-size: 2rem;
+
+  cursor: pointer;
+  transition: color 0.1s ease-in-out;
+}
+
+.close-button:hover {
+  color: gray;
+}
+
+/* =========================
+   Responsive Design
+   ========================= */
+
+@media (max-width: 380px) {
+  .keyboard {
+    padding-inline: 2px;
+  }
+
+  .keyboard-row {
+    gap: 4px;
+  }
+}
+
+/* =========================
+   Animations
+   ========================= */
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes flip {
   0% {
     transform: rotateX(0deg);
     background-color: transparent;
-  }
-
-  49% {
-    transform: rotateX(89deg);
-    background-color: transparent;
+    border-color: #3a3a3c;
   }
 
   50% {
+    transform: rotateX(89deg);
+    background-color: transparent;
+    border-color: #3a3a3c;
+  }
+
+  51% {
     transform: rotateX(90deg);
     background-color: var(--flip-color);
+    border-color: var(--flip-color);
   }
 
   100% {
     transform: rotateX(0deg);
     background-color: var(--flip-color);
+    border-color: var(--flip-color);
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.8);
+  }
+
+  50% {
+    transform: scale(1.123);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes no-word {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-10px);
+  }
+
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(10px);
+  }
+}
+
+/* =========================
+   Accessibility
+   ========================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .spin,
+  .pop,
+  .no-word,
+  .end-screen-container {
+    animation-duration: 0.01s;
+    animation-delay: 0s;
   }
 }
